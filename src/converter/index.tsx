@@ -21,7 +21,9 @@ function Converter() {
   const [fileName, setFileName] = useState("");
   const [isConverting, setIsConverting] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState("");
-  const [disabledInput, setDisabledInput] = useState("");
+  const [disabledInput, setDisabledInput] = useState<"" | "file" | "svgText">(
+    ""
+  );
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -134,7 +136,7 @@ function Converter() {
             <SelectGroup>
               {["webp", "jpeg", "png", "avif"].map((format) => {
                 return (
-                  <SelectItem key={format} value={format}>
+                  <SelectItem key={format} value={format} className="bg-yellow">
                     {format}
                   </SelectItem>
                 );
@@ -160,7 +162,7 @@ function Converter() {
                 return;
               }
 
-              setDisabledInput("url");
+              setDisabledInput("svgText");
               setFileName(file.name);
             }}
           />
@@ -187,16 +189,17 @@ function Converter() {
               <Textarea
                 rows={10}
                 onKeyPress={() => {
-                  setDisabledInput("file");
+                  setDisabledInput("svgText");
                 }}
                 onPaste={() => {
-                  setDisabledInput("file");
+                  setDisabledInput("svgText");
                 }}
                 onBlur={(e) => {
+                  console.log(e.value);
                   setDisabledInput(
-                    (e.currentTarget as HTMLTextAreaElement).value === ""
+                    !(e.currentTarget as HTMLTextAreaElement).value
                       ? ""
-                      : "file"
+                      : "svgText"
                   );
                 }}
                 name="svgText"
@@ -213,8 +216,7 @@ function Converter() {
           <div className="flex justify-center">
             <Button
               className="w-full disabled:pointer-events-none disabled:bg-none disabled:text-gray-700 disabled:border-2 disabled:border-solid disabled:border-gray-700 bg-white text-zinc-800"
-              id="submitButton"
-              disabled={!disabledInput}>
+              id="submitButton">
               <BeakerIcon />
               Convert Image
             </Button>
