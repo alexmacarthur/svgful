@@ -1,0 +1,50 @@
+---
+import type { SoftwareApplication, WithContext } from "schema-dts";
+
+interface Props {
+  title: string;
+}
+
+const title = "Convert an SVG";
+const description = "Quickly convert an SVG to PNG, JPEG, and more.";
+
+const schema: WithContext<SoftwareApplication> = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  url: import.meta.env.SITE_URL,
+  name: title,
+  description: description,
+  operatingSystem: "All",
+  author: {
+    "@type": "Person",
+    name: "Alex MacArthur",
+    url: import.meta.env.SITE_URL,
+  },
+};
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta property="og:image" content={"https://svgful.com/open-graph.png"} />
+    <meta property="og:title" content={title} />
+    <meta name="description" content={description} />
+    <script defer data-domain="svgful.com" src="/js/numbers.js"></script>
+
+    <script
+      type="application/ld+json"
+      key="ld+json"
+      set:html={JSON.stringify(schema)}
+    />
+
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

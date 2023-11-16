@@ -1,0 +1,77 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Converter from "../../src/converter/index.tsx";
+import { Accordion } from "../../src/components/Accordion.tsx";
+import "../../app/globals.css";
+import "@fontsource-variable/karla";
+
+const accordionData = [
+  {
+    title: "That's it? It's just an SVG converter?",
+    description: "Yes. That's it. It's just an SVG converter.",
+  },
+  {
+    title:
+      "Why would I ever need to convert an SVG to PNG, JPEG, or anything else?",
+    description:
+      "SVG is an extremely flexible, scalable format that's especially useful on the web. But in some cases, a raster format is more useful or easier to handle. For example, many email clients still don't support rendering SVGs, forcing you to opt for a PNG or JPEG instead.",
+  },
+  {
+    title: "What's the catch?",
+    description:
+      "None? It's totally free. I don't save your images anywhere. It's just a tool I've occassionally needed myself and thought others might find it useful. But if you wanna say 'thanks,' <a class='underline' target='_blank' href='https://twitter.com/amacarthur'>find me on X</a>.",
+  },
+  {
+    title: "Do have any other image-related tools?",
+    description:
+      "I'm glad you asked. I run a drop-in image optimization service for the modern web. If you'd like an incredibly easy way to optimize, reformat, and cache your website's images for better performance and SEO, take a gander at <a class='underline' target='_blank' href='https://picperf.io'>PicPerf.io</a>.",
+  },
+];
+---
+
+<Layout>
+  <main class="pt-20 pb-16">
+    <div class="mb-8 text-center">
+      <h1 class="text-white text-3xl md:text-5xl font-bold">Convert an SVG</h1>
+    </div>
+
+    <div class="px-4 md:px-6 w-full mx-auto max-w-4xl">
+      <div class="text-center mb-20 max-w-lg mx-auto">
+        <p class="mb-6">
+          Quickly convert an SVG file to PNG, JPEG, WebP, or AVIF. Upload the
+          file or paste in the code directly, and you'll be given back a
+          download.
+        </p>
+
+        <p>
+          SVGs are converted in the most lossless way possible, so you're gonna
+          get back a high-quality result.
+        </p>
+      </div>
+
+      <div class="mb-16">
+        <Converter client:load />
+      </div>
+
+      <h2 class="text-2xl mb-4">Some Questions & Answers</h2>
+      <Accordion data={accordionData} client:idle />
+    </div>
+  </main>
+
+  <footer class="text-center p-6">
+    Created by <a class="underline" target="_blank" href="https://macarthur.me"
+      >Alex MacArthur</a
+    >
+  </footer>
+</Layout>
+
+<style is:global>
+  body {
+    @apply dark:bg-zinc-900;
+    font-family: "Karla Variable", sans-serif;
+  }
+
+  main {
+    @apply min-h-screen;
+  }
+</style>
