@@ -32,6 +32,10 @@ function Converter() {
     const formData = new FormData(form);
     const file = formData.get("file") as File;
 
+    if (!format) {
+      return setError("Please select a format.");
+    }
+
     if (!(!file || file.size) && !formData.get("svgText")) {
       return setError("Please upload a file or paste some SVG code.");
     }
@@ -69,8 +73,7 @@ function Converter() {
           <a
             href={downloadUrl}
             download={`converted-image.${format}`}
-            className="button flex gap-2 items-center"
-          >
+            className="button flex gap-2 items-center">
             <DownloadIcon />
 
             <span>Download Image</span>
@@ -88,8 +91,7 @@ function Converter() {
               format,
             });
           }}
-          className="button-as-link block text-center mx-auto mt-5"
-        >
+          className="button-as-link block text-center mx-auto mt-5">
           Convert Another
         </Button>
       </div>
@@ -102,7 +104,7 @@ function Converter() {
         <h4 className="text-xl mt-3 mb-4 font-normal">
           Give us a few seconds...
         </h4>
-        <span className="block animate-spin text-sky-300 w-20 h-20 mx-auto text-white">
+        <span className="block animate-spin w-20 h-20 mx-auto text-white">
           <LoadingIcon />
         </span>
       </div>
@@ -115,8 +117,8 @@ function Converter() {
     return disabledInput === "file";
   }
 
-  function urlIsDisabled() {
-    return disabledInput === "url";
+  function textIsDisabled() {
+    return disabledInput === "svgText";
   }
 
   return (
@@ -162,7 +164,7 @@ function Converter() {
               setFileName(file.name);
             }}
           />
-          <div className="flex flex-col gap-8 items-center mb-12">
+          <div className="flex flex-col gap-8 items-center mb-8">
             <div className="flex-1 w-full">
               <h3 className="text-2xl mb-3">2) Upload/Paste the SVG</h3>
 
@@ -170,13 +172,11 @@ function Converter() {
               <div
                 className={`flex flex-col sm:flex-row gap-2 relative ${
                   fileIsDisabled() ? disabledClasses : ""
-                }`}
-              >
+                }`}>
                 <Button
                   variant="outline"
                   onClick={() => fileRef.current?.click()}
-                  type="button"
-                >
+                  type="button">
                   {fileName || "Choose a File"}
                 </Button>
               </div>
@@ -196,11 +196,11 @@ function Converter() {
                   setDisabledInput(
                     (e.currentTarget as HTMLTextAreaElement).value === ""
                       ? ""
-                      : "file",
+                      : "file"
                   );
                 }}
                 name="svgText"
-                className={`${urlIsDisabled() ? disabledClasses : ""}`}
+                className={`${textIsDisabled() ? disabledClasses : ""}`}
                 placeholder={'<svg width="100" height="100">...</svg>'}
               />
             </div>
@@ -214,8 +214,7 @@ function Converter() {
             <Button
               className="w-full disabled:pointer-events-none disabled:bg-none disabled:text-gray-700 disabled:border-2 disabled:border-solid disabled:border-gray-700 bg-white text-zinc-800"
               id="submitButton"
-              disabled={!disabledInput}
-            >
+              disabled={!disabledInput}>
               <BeakerIcon />
               Convert Image
             </Button>
