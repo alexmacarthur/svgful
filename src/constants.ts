@@ -1,2 +1,4 @@
-// export const API_HOST = "https://picperf-optimization.fly.dev";
-export const API_HOST = "http://localhost:3000";
+export const API_HOST =
+  import.meta.env.MODE == "development"
+    ? "http://localhost:3000"
+    : "https://picperf-optimization.fly.dev";
