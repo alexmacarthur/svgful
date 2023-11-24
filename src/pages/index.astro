@@ -1,14 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Converter from "../../src/converter/index.tsx";
-import { Accordion } from "../../src/components/Accordion.tsx";
 import "../../app/globals.css";
 import "@fontsource-variable/karla";
 
 const accordionData = [
   {
     title: "That's it? It's just an SVG converter?",
-    description: "Yes. That's it. It's just an SVG converter.",
+    description:
+      "Yes. That's it. It's just an SVG converter. All sorts of formats are supported, including SVG to PNG, SVG to JPEG, SVG to WebP, and SVG to AVIF.",
   },
   {
     title:
@@ -31,8 +31,17 @@ const accordionData = [
 
 <Layout>
   <main class="pt-20 pb-16">
-    <div class="mb-8 text-center">
-      <h1 class="text-white text-3xl md:text-5xl font-bold">Convert an SVG</h1>
+    <div class="mb-12 text-center">
+      <h1 class="text-white text-4xl md:text-6xl font-bold relative z-10">
+        Convert an SVG
+      </h1>
+
+      <span
+        class="text-sm inline-block border-2 px-3 py-2 transform md:-translate-y-1 -rotate-1 md:-rotate-2"
+        >brought to you by <a href="https://picperf.io" target="_blank"
+          >PicPerf.io</a
+        >!</span
+      >
     </div>
 
     <div class="px-4 md:px-6 w-full mx-auto max-w-4xl">
@@ -53,8 +62,18 @@ const accordionData = [
         <Converter client:load />
       </div>
 
-      <h2 class="text-2xl mb-4">Some Questions & Answers</h2>
-      <Accordion data={accordionData} client:idle />
+      <h2 class="text-3xl mb-6">Some Questions & Answers</h2>
+
+      <ul>
+        {
+          accordionData.map(({ title, description }) => (
+            <li class="mb-8">
+              <h3 class="text-xl mb-2">{title}</h3>
+              <p set:html={description} />
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </main>
 
