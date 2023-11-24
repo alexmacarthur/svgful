@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import LoadingIcon from "./LoadingIcon";
@@ -22,7 +21,7 @@ function Converter() {
   const [isConverting, setIsConverting] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState("");
   const [disabledInput, setDisabledInput] = useState<"" | "file" | "svgText">(
-    ""
+    "",
   );
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -75,7 +74,8 @@ function Converter() {
           <a
             href={downloadUrl}
             download={`converted-image.${format}`}
-            className="button flex gap-2 items-center">
+            className="button flex gap-2 items-center"
+          >
             <DownloadIcon />
 
             <span>Download Image</span>
@@ -93,7 +93,8 @@ function Converter() {
               format,
             });
           }}
-          className="button-as-link block text-center mx-auto mt-5">
+          className="button-as-link block text-center mx-auto mt-5"
+        >
           Convert Another
         </Button>
       </div>
@@ -124,19 +125,87 @@ function Converter() {
   }
 
   return (
-    <div className="grid md:grid-cols-9 gap-10">
+    <form onSubmit={handleSubmit as any} className="grid md:grid-cols-5 gap-10">
       <div className="md:col-span-3">
-        <h3 className="text-2xl mb-3">1) Choose a Format</h3>
+        <input type="hidden" name="format" value={format} />
+        <input
+          ref={fileRef}
+          type="file"
+          name="file"
+          id="file"
+          className="-z-10 opacity-0 absolute w-auto"
+          accept={`image/svg+xml`}
+          disabled={fileIsDisabled()}
+          onChange={(e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
 
+            if (!file) {
+              return;
+            }
+
+            setDisabledInput("svgText");
+            setFileName(file.name);
+          }}
+        />
+        <div className="flex flex-col gap-8 items-center mb-8">
+          <div className="flex-1 w-full">
+            <h4 className="text-2xl mb-3">2) Upload/Paste an SVG</h4>
+
+            <label className="mb-3 inline-block" htmlFor="file">
+              Upload a file...
+            </label>
+            <div
+              className={`flex flex-col sm:flex-row gap-2 relative ${
+                fileIsDisabled() ? disabledClasses : ""
+              }`}
+            >
+              <Button
+                aria-label="Choose a File"
+                variant="outline"
+                onClick={() => fileRef.current?.click()}
+                type="button"
+              >
+                {fileName || "Choose a File"}
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex-1 w-full">
+            <label className="mb-3 inline-block" htmlFor="svgText">
+              ...or paste the code.
+            </label>
+            <Textarea
+              rows={10}
+              onKeyPress={() => {
+                setDisabledInput("file");
+              }}
+              onPaste={() => {
+                setDisabledInput("file");
+              }}
+              onBlur={(e) => {
+                setDisabledInput(
+                  !(e.currentTarget as HTMLTextAreaElement).value ? "" : "file",
+                );
+              }}
+              name="svgText"
+              id="svgText"
+              className={`${textIsDisabled() ? disabledClasses : ""}`}
+              placeholder={'<svg width="100" height="100">...</svg>'}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="md:col-span-2">
+        <h4 className="text-2xl mb-3">1) Choose an Output Format</h4>
         <Select onValueChange={setFormat}>
           <SelectTrigger>
             <SelectValue placeholder="Select an output format" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-background">
             <SelectGroup>
               {["webp", "jpeg", "png", "avif"].map((format) => {
                 return (
-                  <SelectItem key={format} value={format} className="bg-yellow">
+                  <SelectItem key={format} value={format}>
                     {format}
                   </SelectItem>
                 );
@@ -144,86 +213,24 @@ function Converter() {
             </SelectGroup>
           </SelectContent>
         </Select>
+        <div className="flex justify-center mt-6">
+          <Button
+            className="w-full disabled:pointer-events-none disabled:bg-none disabled:text-gray-700 disabled:border-2 disabled:border-solid disabled:border-gray-700 bg-white text-zinc-800"
+            aria-label="Convert Image"
+            id="submitButton"
+          >
+            <BeakerIcon />
+            Convert Image
+          </Button>
+        </div>
+
+        {error && (
+          <span className="text-red-500 text-center block p-6 mt-0">
+            {error}
+          </span>
+        )}
       </div>
-      <div className="md:col-span-6">
-        <form onSubmit={handleSubmit as any}>
-          <input type="hidden" name="format" value={format} />
-          <input
-            ref={fileRef}
-            type="file"
-            name="file"
-            className="-z-10 opacity-0 absolute w-auto"
-            accept={`image/svg+xml`}
-            disabled={fileIsDisabled()}
-            onChange={(e) => {
-              const file = (e.target as HTMLInputElement).files?.[0];
-
-              if (!file) {
-                return;
-              }
-
-              setDisabledInput("svgText");
-              setFileName(file.name);
-            }}
-          />
-          <div className="flex flex-col gap-8 items-center mb-8">
-            <div className="flex-1 w-full">
-              <h3 className="text-2xl mb-3">2) Upload/Paste the SVG</h3>
-
-              <label className="mb-3 inline-block">Upload a file...</label>
-              <div
-                className={`flex flex-col sm:flex-row gap-2 relative ${
-                  fileIsDisabled() ? disabledClasses : ""
-                }`}>
-                <Button
-                  variant="outline"
-                  onClick={() => fileRef.current?.click()}
-                  type="button">
-                  {fileName || "Choose a File"}
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex-1 w-full">
-              <label className="mb-3 inline-block">...or paste the code.</label>
-              <Textarea
-                rows={10}
-                onKeyPress={() => {
-                  setDisabledInput("svgText");
-                }}
-                onPaste={() => {
-                  setDisabledInput("svgText");
-                }}
-                onBlur={(e) => {
-                  console.log(e.value);
-                  setDisabledInput(
-                    !(e.currentTarget as HTMLTextAreaElement).value
-                      ? ""
-                      : "svgText"
-                  );
-                }}
-                name="svgText"
-                className={`${textIsDisabled() ? disabledClasses : ""}`}
-                placeholder={'<svg width="100" height="100">...</svg>'}
-              />
-            </div>
-          </div>
-          {error && (
-            <span className="text-red-500 text-center block p-6 -mt-12">
-              {error}
-            </span>
-          )}
-          <div className="flex justify-center">
-            <Button
-              className="w-full disabled:pointer-events-none disabled:bg-none disabled:text-gray-700 disabled:border-2 disabled:border-solid disabled:border-gray-700 bg-white text-zinc-800"
-              id="submitButton">
-              <BeakerIcon />
-              Convert Image
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+    </form>
   );
 }
 
